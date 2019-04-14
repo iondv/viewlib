@@ -1,0 +1,45 @@
+<!-- addrsearch -->
+<%
+  let selectFields = [];
+  for (let i = 0; i < field.fields.length; i++) {
+    selectFields.push({
+      caption: field.fields[i].caption,
+      id: `${id}_`+ i,
+      filter: field.fields[i].selConditions,
+      searchBy: field.fields[i].options && field.fields[i].options.searchBy || 'name'
+    });
+  }
+  selectFields.push({
+    caption: field.caption,
+    id: id,
+    filter: field.selConditions,
+    searchBy: field.options && field.options.searchBy || 'name'
+  });
+%>
+<div class="form-group <%= field.required?"required":"" %> <%=cssFromTags(field)%>"
+     style="<%=styleFromTags(field)%>" data-type="text" data-prop="<%= JSON.stringify(field) %>">
+    <label for="<%= id %>" class="col-md-2 col-sm-3 control-label"><%= field.caption %></label>
+    <div class="col-md-10 col-sm-9">
+      <div class="form-control-box">
+        <select class="form-control" id="search_<%=id%>" name="<%=prop.getName()%>"
+                placeholder="<%= field.caption %>"
+                search-url="/<%= module %>/api/<%= item.getClassName() %>/<%= prop.getName() %>/hierarchySearch">
+             <% if (prop.getValue()) { %>
+              <option selected value="<%= prop.getValue() %>"><%= prop.getDisplayValue() %></option>
+             <% } %>
+            </select>
+        <input type="hidden"
+          id="<%= id %>"
+          name="<%= prop.getName() %>"
+          value="<%= prop.getValue() %>" class="attr-value" />
+      </div>
+    </div>
+</div>
+<% script(`${module}/viewlib-static/js/addrsearch.js`) -%>
+<script>
+  $(function() {
+    var options = <%-JSON.stringify(field.options || {})%>;
+    options.fields = <%-JSON.stringify(selectFields)%>;
+    $('#search_' + "<%= id %>".replace( /(:|\.|\[|\]|,|=|@)/g, "\\$1" )).ionAddrSearch(options);
+  });
+</script>

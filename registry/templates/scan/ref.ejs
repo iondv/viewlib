@@ -1,0 +1,183 @@
+<!-- dropdown-object -->
+<% script(`${module}/viewlib-static/js/inlineScan.js`) -%>
+<% script(`${module}/viewlib-static/js/thumbCollection.js`) -%>
+<% script(`${module}/viewlib-static/js/ajax-uploader-scan.js`) -%>
+<% script(`${module}/viewlib-static/vendor/scanner/scanner.js`) -%>
+<% stylesheet(`${module}/viewlib-static/css/scan.css`) -%>
+<% if (!attrPermissions || attrPermissions.read) { %>
+<% var referenceValue, displayValue, controlType = "reference"; %>
+
+<!-- attrs/_reference_header -->
+<%
+  referenceValue = prop.getValue();
+  displayValue = prop.getDisplayValue(utils.dateCallback);
+
+  if(typeof options !== 'object') {
+    options = {};
+  }
+  Object.assign(options , {
+    createUrl: item.getItemId()
+      ? `${module}/${node}/new/${item.getClassName()}.${item.getItemId()}/${prop.getName()}/${prop.meta.refClass}`
+      : `${module}/${node}/new/${item.getClassName()}/${prop.getName()}/${prop.meta.refClass}`,
+    selectUrl: item.getItemId()
+      ? `${module}/${node}/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/select`
+      : `${module}/${node}/${item.getClassName()}/${prop.getName()}/select`,
+    updateUrl: item.getItemId()
+      ? `${module}/${node}/view/${item.getClassName()}.${item.getItemId()}/${prop.getName()}/${prop.meta.refClass}`
+      : `${module}/${node}/view/${item.getClassName()}/${prop.getName()}/${prop.meta.refClass}`,
+    refClass: prop.meta.refClass,
+    backRef: prop.meta.backRef,
+    useMaster: !referenceValue && !item.getItemId() && master.item && master.shortClass === prop.meta.refClass && master.backRef === prop.getName(),
+    selConditions: field.selConditions,
+    selSorting: field.selSorting,
+    globalReadonly,
+    shortView
+  });
+  var masterCss = '';
+
+  if (options.useMaster) {
+    referenceValue = master.id;
+    if (master.item) {
+      displayValue = master.item.toString(prop.meta.semanticGetter, utils.dateCallback);
+    } else {
+      masterCss = 'assigned-master';
+    }
+    if (!displayValue) {
+      displayValue = 'Объект будет привязан автоматически';
+    }
+  }
+  let displayInlineControls = true;
+%>
+<% displayInlineControls = prop.meta.refClass && prop.meta.semantic && prop.meta.semantic.indexOf('|') === -1 %>
+<div id="scan-group_<%= id %>"
+     class="form-group scan-group <%= field.required?"required":"" %> <%= masterCss %> <%=cssFromTags(field)%>"
+     style="<%=styleFromTags(field)%>"
+     data-type="<%= controlType %>"
+     data-options="<%=JSON.stringify(options)%>"
+     data-prop="<%= JSON.stringify(field) %>"
+     data-ref-short-view="<%- refShortViewFields.includes(prop.getName()) %>">
+  <label for="<%= id %>" class="col-sm-3 col-md-2 control-label"><%= field.caption %></label>
+  <div class="col-sm-9 col-md-10">
+    <div class="form-control-box dropdown <%if (attrPermissions.write) { %> dropdown-with-tools<% } %>">
+      <% if (displayInlineControls) {%>
+      <input type="hidden"
+             id="<%= id %>"
+             name="<%= prop.getName() %>"
+             data-ref-class="<%= prop.meta.refClass %>"
+             value="<%=referenceValue ? referenceValue : '' %>"
+             class="attr-value" />
+      <div class="scan-holder"></div>
+      <div class="scan-uploader" data-options=<%=JSON.stringify(field.options)%> data-url="<%=module%>/api/upload/<%=prop.meta.refClass%>">
+          <input type="file" class="scan-input-file">
+          <div class="uploader-overflow">Слишком много файлов</div>
+          <div class="uploader-list clearfix">
+            <div class="uploader-item pending sample">
+              <div class="uploader-thumb"><div></div></div>
+              <div class="uploader-signs">
+                <div class="uploader-sign-pending fa fa-refresh fa-spin"></div>
+                <div class="uploader-sign-processing fa fa-refresh fa-spin"></div>
+                <div class="uploader-sign-done glyphicon glyphicon-ok"></div>
+                <div class="uploader-sign-failed glyphicon glyphicon-ban-circle"></div>
+              </div>
+              <div class="uploader-remove" title="Удалить"><span class="glyphicon glyphicon-remove"></span></div>
+              <div class="uploader-info">
+                <div class="uploader-filename">File</div>
+                <div class="progress progress-xxs"><div class="progress-bar"></div></div>
+                <div class="uploader-message">Ожидает проверки...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% if (
+        !(field.readonly || globalReadonly) &&
+        attrPermissions && attrPermissions.write
+      ) { %>
+      <div class="dropdown-tools list-tools clearfix">
+        <button type="button" class="select-btn btn btn-primary" title="Выбрать"
+                id="<%=`${form.ids.refBtn}${prop.getName()}_select`%>"
+                data-ref-property="<%= prop.getName() %>" data-id="SELECT">
+          <span class="glyphicon glyphicon-option-horizontal"></span>
+        </button>
+        <%if (!(field.readonly || globalReadonly) && attrPermissions.c_create) {%>
+        <div class="btn-group">
+          <button type="button"
+                  style="display:inline-block;"
+                  class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+            <span class="glyphicon glyphicon-plus "></span>
+          </button>
+          <ul class="dropdown-menu create-menus" role="menu">
+            <li>
+              <button type="button" class="scan-inline command btn btn-success"
+                        title="Сканировать"
+                        id="<%=`${form.ids.refBtn}${prop.getName()}_scan`%>"
+                        style="display:none;"
+                        data-ref-property="<%= prop.getName() %>"
+                        data-id="CREATE">
+                <span class="glyphicon glyphicon-inbox"></span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="create-btn btn btn-success" title="Создать"
+                        id="<%=`${form.ids.refBtn}${prop.getName()}_create`%>"
+                        data-ref-property="<%= prop.getName() %>" data-id="CREATE">
+                <span class="glyphicon glyphicon-plus-sign"></span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+
+        <% } %>
+        <% if (attrPermissions.c_view) { %>
+          <button type="button" class="edit-btn btn btn-info"
+                  title="<%= attrPermissions.c_edit ? 'Править' : 'Просмотр' %>"
+                  id="<%=`${form.ids.refBtn}${prop.getName()}_edit`%>"
+                  data-ref-property="<%= prop.getName() %>" data-id="EDIT">
+            <span class="glyphicon glyphicon-edit"></span>
+          </button>
+        <% } %>
+        <button type="button" class="remove-btn btn btn-warning" title="Убрать"
+                id="<%=`${form.ids.refBtn}${prop.getName()}_remove`%>"
+                data-ref-property="<%= prop.getName() %>" data-id="REMOVE">
+          <span class="glyphicon glyphicon-remove"></span>
+        </button>
+      </div>
+      <% } %>
+
+    </div>
+    <p class="error-block"></p>
+    <% } else {%>
+      <% if (!Boolean(prop.meta.refClass)) {%>
+        <p class="error-block">Не указан ссылочный класс!</p>
+      <% }%>
+      <% if (!Boolean(prop.meta.semantic)) {%>
+        <p class="error-block">Не указана семантика!</p>
+      <% }%>
+      <% if (Boolean(prop.meta.semantic.indexOf('|') === -1)) {%>
+        <p class="error-block">Указано несколько полей для отображения!</p>
+      <% }%>
+      <p class="error-block"></p>
+    <% }%>
+  </div>
+</div>
+  <% if (displayInlineControls) {%>
+    <script>
+      $(function() {
+        let options = {
+          attr: "<%=prop.meta.semantic%>",
+          refClass: "<%=prop.meta.refClass%>",
+          refCreate: "<%=`${module}/api/${node}/${prop.meta.refClass}`%>",
+          refRead: "<%=`${module}/api/${prop.meta.refClass}`%>",
+          requestParams: {
+            $masterClass: "<%=item.getClassName()%>",
+            $masterId: "<%=item.getItemId()%>",
+            $masterProperty: "<%=prop.getName()%>",
+            validateBy: "<%=`${item.getClassName()}.${item.getItemId()}.${prop.getName()}`%>"
+          }
+        }
+        $("#scan-group_<%= id %>").inlineScanner(options);
+      })
+    </script>
+  <% } %>
+<% } %>
+

@@ -1,0 +1,19 @@
+{
+  "namespace": "utils",
+  "globals": {
+  
+  },
+  "deployer": "built-in",
+  "modules": {
+    "registry": {
+      "globals": {
+        "templates": [
+          "applications/viewlib/registry/templates"
+        ],
+        "statics": {
+          "viewlib-static": "applications/viewlib/registry/static"
+        }
+      }
+    }
+  }
+}

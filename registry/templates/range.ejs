@@ -1,0 +1,60 @@
+<!-- range -->
+<%
+  var escId = 'range_' + id.replace( /(:|\.|\[|\]|,|=|@)/g, "\\$1" );
+%>
+<style>
+  #<%= escId %> .custom-handle {
+    width: 3em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    text-align: center;
+    line-height: 1.6em;
+  }
+  #<%= escId %> .custom-handle::before {
+    display: none;
+  }
+</style>
+
+<script>
+  $( function() {
+    var $slider = $("#range_"+ "<%= id %>".replace( /(:|\.|\[|\]|,|=|@)/g, "\\$1" ));
+    var handle = $slider.find(".custom-handle");
+    var hidden = $slider.next();
+    var sliderOptions = {
+      create: function() {
+        handle.text( $( this ).slider( "value" ) );
+        hidden.val($( this ).slider( "value" ));
+      },
+      slide: function( event, ui ) {
+        handle.text(ui.value);
+        hidden.val(ui.value);
+        hidden.trigger("change");
+      },
+      value: parseInt("<%= prop.getDisplayValue() %>") || null
+    };
+    <% if (field.options) {
+      if (field.options.min) { %>
+        sliderOptions.min = parseInt("<%= field.options.min %>") || null;
+      <% }
+      if (field.options.max) { %>
+        sliderOptions.max = parseInt("<%= field.options.max %>") || null;
+      <% }
+      if (field.options.step) { %>
+        sliderOptions.step = parseInt("<%= field.options.step %>") || null;
+      <% }
+    } %>
+    $slider.slider(sliderOptions);
+  });
+</script>
+
+<div class="form-group <%= field.required?"required":"" %> <%=cssFromTags(field)%>" style="<%=styleFromTags(field)%>"
+     data-type="number" data-prop="<%= JSON.stringify(field) %>">
+    <label for="range_<%= id %>" class="col-md-2 col-sm-3 control-label"><%= field.caption %></label>
+    <div class="col-md-10 col-sm-9">
+        <div class="form-control" id="range_<%= id %>">
+          <div class="ui-slider-handle custom-handle"></div>
+        </div>
+        <input type="hidden" class="attr-value" name="<%= prop.getName() %>">
+    </div>
+</div>

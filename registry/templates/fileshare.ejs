@@ -1,0 +1,115 @@
+<!-- fileshare -->
+
+<%
+
+var opts = Object.assign({}, field.options, {maxFiles: 1});
+
+%>
+
+<% if (field.readonly || globalReadonly) { %>
+<div class="form-group <%=cssFromTags(field)%>" style="<%=styleFromTags(field)%>" data-type="file" data-prop="<%= JSON.stringify(field) %>">
+  <label for="<%= id %>" class="col-md-2 col-sm-3 control-label">
+    <%= field.caption %>
+  </label>
+  <div class="col-md-10 col-sm-9">
+    <% var file = prop.getValue(); %>
+    <% if (file) { %>
+    <p data-fileid="<%=file.id%>" class="form-control-static file-frame">
+      <a href="<%=file.link%>" target="_blank" class="file-frame-title"><%=file.name%></a>
+    </p>
+    <% } %>
+  </div>
+</div>
+<% } else { %>
+<%
+const escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
+%>
+<div class="form-group <%= field.required?"required":"" %> <%=cssFromTags(field)%>"
+    id="fileshare_<%= escapedId %>"
+    style="<%=styleFromTags(field)%>" data-type="file" data-prop="<%= JSON.stringify(field) %>">
+  <label for="<%= id %>" class="col-md-2 col-sm-3 control-label">
+    <p style="display: inline-block;"><button type="button" class="btn btn-primary btn-lg share-dlg-btn dir-share" 
+      data-toggle="modal" data-target="#share_<%= escapedId %>"
+      style="display: none;">
+      <span class="glyphicon glyphicon-cloud-download" title="sharing"></span>
+    </button></p>
+    <%= field.caption %>
+    </label>
+  <div class="col-md-10 col-sm-9">
+    <% var file = prop.getValue(); %>
+    <% if (file) {  %>
+    <p data-fileid="<%=file.id%>" data-filename="<%=file.name%>" class="form-control-static file-frame">
+
+      <a href="<%=file.link%>" target="_blank" class="file-frame-title"><%=file.name%></a>
+      <span class="remove-fileshare-btn glyphicon glyphicon-remove text-danger ml10" title="Удалить файл"></span>
+      <span class="remove-file-btn" style="display: none;"></span>
+
+      <% if (Array.isArray(field.tags) && field.tags.indexOf('share') >= 0) { %>
+      <button type="button" class="btn btn-primary btn-lg fileshare-dlg-btn" data-toggle="modal" data-target="#share_<%= escapedId %>">
+        <span class="glyphicon glyphicon-cloud-download" title="sharing"></span>
+      </button>
+      <div class="modal fileshare fade" id="share_<%= escapedId %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+			<%- partial('./parts/fileshare-modal', {file: file, escapedId: escapedId}) %>
+        </div>
+      </div>
+      <% } %>
+    </p>
+    <% } %>
+    <div class="uploader"
+      data-url="<%=module%>/api/upload/<%= item.getClassName() %><%= item.getItemId() ? '/' + item.getItemId() : '/' %>"
+      data-attr="<%= prop.getName() %>" 
+      data-options="<%=JSON.stringify(opts)%>"
+      <% if (file) { %>style="display:none;"<% } %>
+      >
+      <input type="hidden" id="<%= id %>" name="<%= prop.getName() %>"
+             value="<%= file ? file.id : "" %>"
+             class="attr-value">
+      <div class="uploader-input">
+        <input type="file" class="uploader-input-file">
+        <div class="uploader-dropzone">
+          <div class="uploader-dropzone-h1">Перетащите файл сюда</div>
+          <div class="uploader-dropzone-h2">или выберите из папки</div>
+        </div>
+      </div>
+      <div class="uploader-overflow">Слишком много файлов</div>
+      <div class="uploader-list clearfix">
+        <div class="uploader-item pending sample">
+          <div class="uploader-thumb"><div></div></div>
+          <div class="uploader-signs">
+            <div class="uploader-sign-pending fa fa-refresh fa-spin"></div>
+            <div class="uploader-sign-processing fa fa-refresh fa-spin"></div>
+            <div class="uploader-sign-done glyphicon glyphicon-ok"></div>
+            <div class="uploader-sign-failed glyphicon glyphicon-ban-circle"></div>
+          </div>
+          <div class="uploader-remove" title="Удалить"><span class="glyphicon glyphicon-remove"></span></div>
+          <div class="uploader-info">
+            <div class="uploader-filename">File</div>
+            <div class="progress progress-xxs"><div class="progress-bar"></div></div>
+            <div class="uploader-message">Ожидает проверки...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="error-block"></p>
+  </div>
+</div>
+<% script(`${module}/viewlib-static/js/fileshare.js`) -%>
+<script>
+  $(function() {
+    var options = <%-JSON.stringify(field.options || {})%>;
+    var $fileshare = $('#fileshare_<%= escapedId %>');
+    var managerOptions = $fileshare.closest('form.object-manager').data('options') || {}; 
+    if (managerOptions && managerOptions.locale) {
+      options.locale = managerOptions.locale;
+    }
+    options.url = {
+      getShare: '<%= module %>/api/share/',
+      shareStatus: '/viewlib/api/fileshare/<%= prop.item.getClassName() %>/<%= item.getItemId() ? item.getItemId() + "/" : "" %><%= prop.getName() %>/',
+      updateShare: '/viewlib/api/fileshare/',
+      removeFile: '/viewlib/api/fileshare/remove/'
+    }
+    $fileshare.ionFileShare(options);
+  });
+</script>
+<% } %>

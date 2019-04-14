@@ -1,0 +1,189 @@
+<!-- file-collection -->
+<%
+	var escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
+
+  var map = field.options && field.options.map || {};
+  var fieldOptions = field.options || {};
+
+  var options = {
+    modalId: `share_${escapedId}`,
+    field: fieldOptions,
+    uploader: Object.assign(
+      {},
+      {
+        maxFiles: prop.meta.maxFileCount || 10,
+        extensions: prop.meta.allowedFileTypes && prop.meta.allowedFileTypes.length
+          ? prop.meta.allowedFileTypes
+          : undefined
+      },
+      field.options
+    ),
+    collection: Object.assign(
+      {map},
+      field.options,
+      {
+        url: {
+          do: `${module}/api/${node}/${prop.meta._refClass.getCanonicalName()}/do`,
+          remove: item.getItemId() && `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/remove`
+        },
+        actions: {
+          download: true,
+          delete: Boolean(!field.readonly && !globalReadonly && attrPermissions && attrPermissions.c_delete),
+          share: Boolean(!field.readonly && !globalReadonly && fieldOptions.share)
+        },
+        masterClass: item.getClassName(),
+        masterId: item.getItemId(),
+        masterProperty: prop.getName(),
+      },
+    ),
+    table: {
+      dt: utils.collectionTableOptions(prop, field),
+      url: {
+        node: `${module}/${node}/`,
+        create: item.getItemId()
+                ? `${module}/${node}/new/${item.getClassName()}.${item.getItemId()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`
+                : `${module}/${node}/new/${item.getClassName()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`,
+        select: item.getItemId()
+                ? `${module}/${node}/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/select`
+                : `${module}/${node}/${item.getClassName()}/${prop.getName()}/select`,
+        update: item.getItemId()
+                ? `${module}/${node}/view/${item.getClassName()}.${item.getItemId()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`
+                : `${module}/${node}/view/${item.getClassName()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`,
+        do: `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/do`,
+        remove: item.getItemId()
+          ? `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/remove`
+          : null,
+        put: item.getItemId()
+          ? `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/add`
+          : null
+      },
+      deffered: true
+    },
+    fileshare: {
+      url: {
+        getShare: `${module}/api/share/`,
+        shareStatus: `/viewlib/api/fileshare/${prop.meta._refClass.getCanonicalName()}/${map.file}/`,
+        updateShare: '/viewlib/api/fileshare/',
+        removeFile: '/viewlib/api/fileshare/remove/'
+      }
+    }
+  }
+  options.table.dt.columns = options.table.dt.columns || [];
+  options.table.dt.columns.push({
+    name: 'file-col-tools',
+    targets: -1,
+    data: null,
+    title: '',
+    defaultContent: ''
+  });
+
+  options.table.dt.pageLength = options.field.pageLength;
+
+  var collData = prop.evaluate();
+  var ajax = false;
+  if (Array.isArray(collData) || !item.getItemId()) {
+    if (typeof utils.addCollectionSyles === 'function') {
+      utils.addCollectionSyles(collData, prop.getName(), tabIndex, fieldIndex, groupIndex);
+    }
+    options.table.dt.data = utils.toJSON(collData || []);
+  } else if (item.getItemId()) {
+    ajax = true;
+    options.table.url.list = `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}`;
+  }
+%>
+<div class="form-group <%= field.required?"required":"" %> <%=cssFromTags(field)%> list-container"
+  id="file-col_<%= escapedId %>"
+  style="<%=styleFromTags(field)%>"
+  data-is-ajax="<%=ajax%>"
+  data-type="multifile"
+  data-attr="<%= prop.getName() %>"
+  data-prop="<%= JSON.stringify(field) %>">
+  <label for="<%= id %>" class="col-md-2 col-sm-3 control-label">
+
+    <% if (!field.readonly && !globalReadonly) { %>
+    <p style="display: inline-block;" class="file-frame">
+      <button type="button" class="btn btn-primary btn-lg share-dlg-btn dir-share"
+              data-toggle="modal" data-target="#share_<%= escapedId %>"
+              style="display: none;">
+        <span class="glyphicon glyphicon-cloud-download" title="sharing"></span>
+      </button>
+    </p>
+    <% } %>
+
+  	<%= field.caption %>
+  </label>
+	<div class="col-md-10 col-sm-9">
+    <input type="hidden" name="<%= prop.getName() %>" class="attr-value" disabled>
+
+    <% if (!field.readonly && !globalReadonly) { %>
+    <div class="modal fileshare fade" id="share_<%= escapedId %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+      <%- partial('./parts/fileshare-modal', {escapedId: escapedId}) %>
+      </div>
+    </div>
+
+    <div class="uploader"
+      data-attr="<%= options.uploader.map.file %>"
+      data-url="<%=module%>/api/upload/<%= item.getClassName() %>.<%= prop.getName() %><%= item.getItemId() ? '/'+item.getItemId() : '' %>"
+      data-options="<%=JSON.stringify(options.uploader)%>">
+      <div class="uploader-input">
+          <input type="file" class="uploader-input-file">
+          <div class="uploader-dropzone">
+            <div class="uploader-dropzone-h1">Перетащите файлы сюда</div>
+            <div class="uploader-dropzone-h2">или выберите из папки</div>
+          </div>
+          <div class="uploader-overflow">Слишком много файлов</div>
+      </div>
+      <div class="uploader-list clearfix">
+        <div class="uploader-item pending sample">
+          <div class="uploader-thumb"><div></div></div>
+          <div class="uploader-signs">
+            <div class="uploader-sign-pending fa fa-refresh fa-spin"></div>
+            <div class="uploader-sign-processing fa fa-refresh fa-spin"></div>
+            <div class="uploader-sign-done glyphicon glyphicon-ok"></div>
+            <div class="uploader-sign-failed glyphicon glyphicon-ban-circle"></div>
+          </div>
+          <div class="uploader-remove" title="Удалить"><span class="glyphicon glyphicon-remove"></span></div>
+          <div class="uploader-info">
+            <div class="uploader-filename">File</div>
+            <div class="progress progress-xxs"><div class="progress-bar"></div></div>
+            <div class="uploader-message">Ожидает проверки...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="list-tools" style="min-height:34px;">
+      <% if (!attrPermissions || attrPermissions.c_view) { %>
+      <button type="button" class="edit command btn btn-info" data-id="EDIT" style="display:none;"
+              title="<%= attrPermissions && attrPermissions.c_edit ? 'Править' : 'Просмотр' %>">
+        <span class="glyphicon glyphicon-edit"></span>
+      </button>
+      <% } %>
+    </div>
+
+		<div class="table-responsive table-loading-container">
+	    <table class="table table-striped table-bordered table-hover multi-selectable"
+	      data-options="<%=htmlEntities(JSON.stringify(options.table))%>">
+	    </table>
+	    <div class="table-loading">
+	      <div class="fa fa-refresh fa-spin table-loader"></div>
+	    </div>
+  	</div>
+
+	</div>
+</div>
+<% script(`${module}/viewlib-static/js/fileshare.js`) -%>
+<% script(`${module}/viewlib-static/js/file-collection.js`) -%>
+<script type="text/javascript">
+  $(function() {
+    var $container = $('#file-col_<%= escapedId %>');
+    var opts = JSON.parse('<%- JSON.stringify(options) %>');
+    var managerOptions = $container.closest('form.object-manager').data('options') || {};
+    if (managerOptions && managerOptions.locale) {
+      opts.fileshare.locale = managerOptions.locale;
+    }
+    $container.ionFileCollection(opts);
+  });
+</script>

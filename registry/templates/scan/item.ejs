@@ -1,0 +1,143 @@
+<%
+const escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
+%>
+<% script(`${module}/viewlib-static/js/ajax-uploader-scan.js`) -%>
+<% script(`${module}/viewlib-static/js/scan.js`) -%>
+<% script(`${module}/viewlib-static/vendor/scanner/scanner.js`) -%>
+<% script(`${module}/viewlib-static/js/thumbCollection.js`) -%>
+<% stylesheet(`${module}/viewlib-static/css/scan.css`) -%>
+
+<div id="block_<%= escapedId %>" class="form-group <%= field.required?"required":"" %> <%=cssFromTags(field)%>"
+     style="<%=styleFromTags(field)%>" data-type="scan" data-prop="<%= JSON.stringify(field) %>">
+  <label for="<%= id %>" class="col-md-2 col-sm-3 control-label"><%= field.caption %></label>
+  <div class="col-sm-9 col-md-10">
+    <button type="button" class="btn btn-default scan-btn">Сканировать</button>
+    <button type="button" class="btn btn-default uploader-btn">Загрузить</button>
+    <%
+    var files = prop.getValue();
+    if (!Boolean(files))
+      files = []
+    if (typeof files !== 'object')
+      files = []
+    if (!Array.isArray(files)) {
+      files = [files]
+    }
+    var fileIds = [];
+    for (var i = 0; i < files.length; i++) {
+      fileIds.push(files[i].id);
+    }
+    if (fileIds.length === 0) {
+      fileIds = ''
+    } else if (fileIds.length === 1) {
+      fileIds = fileIds[0]
+    } else if (fileIds.length > 1) {
+      fileIds = JSON.stringify(fileIds)
+    }
+    %>
+    <input type="hidden" id="<%= id %>"
+           value="<%=fileIds%>"
+           name="<%= prop.getName() %>"
+           class="attr-value">
+    <div class="scan-uploader" data-options=<%=JSON.stringify(field.options)%> data-url="<%=module%>/api/upload-image/<%=item.getClassName()%>" data-attr="<%=prop.getName()%>">
+      <input type="file" class="scan-input-file">
+      <div class="uploader-overflow">Слишком много файлов</div>
+      <div class="uploader-list clearfix">
+        <div class="uploader-item pending sample">
+          <div class="uploader-thumb"><div></div></div>
+          <div class="uploader-signs">
+            <div class="uploader-sign-pending fa fa-refresh fa-spin"></div>
+            <div class="uploader-sign-processing fa fa-refresh fa-spin"></div>
+            <div class="uploader-sign-done glyphicon glyphicon-ok"></div>
+            <div class="uploader-sign-failed glyphicon glyphicon-ban-circle"></div>
+          </div>
+          <div class="uploader-remove" title="Удалить"><span class="glyphicon glyphicon-remove"></span></div>
+          <div class="uploader-info">
+            <div class="uploader-filename">File</div>
+            <div class="progress progress-xxs"><div class="progress-bar"></div></div>
+            <div class="uploader-message">Ожидает проверки...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scan-holder">
+      <%
+      for (var j = 0; j < files.length; j++) {
+      %>
+      <div data-fileid="<%=files[j].id%>" class="form-control-static file-frame">
+        <a href="<%= files[j].link %>" target="_blank" class="file-frame-title">
+          <img src="<%=files[j].thumbnails && files[j].thumbnails.small ? files[j].thumbnails.small.link : files[j].link%>" alt="<%=files[j].name%>"></a>
+        <span class="remove-btn glyphicon glyphicon-remove text-danger ml10" title="Удалить файл"></span>
+      </div>
+      <% } %>
+    </div>
+
+    <p class="error-block"></p>
+  </div>
+</div>
+<script>
+  $(function() {
+    let $scanGroup = $('#block_<%= escapedId %>');
+    let $propInput = $scanGroup.find('.attr-value');
+    let $uploaders = $scanGroup.find('.scan-uploader');
+    let $holder = $scanGroup.find('.scan-holder');
+    let $scanBtn = $scanGroup.find('.scan-btn');
+    let $uploadBtn = $scanGroup.find('.uploader-btn');
+    $scanBtn.click(function () {
+      $uploaders.trigger('uploader.empty');
+      $holder.trigger('holder.clear');
+      $uploaders.trigger('uploader.scan');
+      $uploaders.one('uploader.file.uploaded', function (event, data) {
+        $propInput.trigger('change');
+      })
+    })
+    $uploadBtn.click(function () {
+      $uploaders.trigger('uploader.empty');
+      $uploaders.trigger('uploader.upload');
+      $uploaders.one('uploader.file.started', function (event, data) {
+        $holder.trigger('holder.clear');
+      });
+      let changeTrigger = function (event, data) {
+        $propInput.trigger('change');
+      }
+      $uploaders.one('uploader.file.uploaded', changeTrigger)
+      $uploaders.one('uploader.file.error',  function (event, data) {
+        $uploaders.unbind('uploader.file.uploaded', changeTrigger);
+      });
+    })
+    $uploaders.ajaxScanUploader($propInput, {fileAttrName: "<%= prop.getName() %>"});
+    $holder.thumbnailCollection([], $propInput);
+    let removeBtns = $holder.find('.remove-btn');
+    removeBtns.click(function () {
+      let frame = $(this).parent();
+      $propInput.trigger('attr.apply', [frame.data('fileid'), false]);
+      frame.remove();
+    })
+    $propInput.on('attr.apply', function (event, data, add) {
+      let old = null;
+      let val = $(this).val();
+      try {
+        old = JSON.parse(val);
+      } catch (err) {
+      }
+      if (!Array.isArray(old))
+        old = val;
+      if (!old) {
+        old = [];
+      }
+      if (!Array.isArray(old)) {
+        old = [old];
+      }
+      let id = (typeof data === 'object') ? data.id : data;
+      if (add) {
+        old.push(id);
+      } else {
+        var ind = old.indexOf(id);
+        if (ind >= 0) {
+          old.splice(ind, 1);
+        }
+      }
+      $(this).val(old.length > 1 ? JSON.stringify(old) : old[0]);
+      $(this).trigger('change');
+    })
+  })
+</script>

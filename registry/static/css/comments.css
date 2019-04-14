@@ -1,0 +1,189 @@
+
+.item-comments {
+  position: relative;
+  padding-top: 20px;
+}
+
+.item-comments-list {
+  margin-bottom: 10px;
+}
+
+.item-comment {
+  position: relative;
+  padding: 0 0 20px 0;
+}
+.item-comment:before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: 10px;
+  height: calc(100% - 10px);
+  width: 1px;
+  background: #ccc;
+}
+.item-comment:not(.has-children):last-child:before {
+  display: none;
+}
+.item-comment-head {
+  position: absolute;
+  left: 0;
+  top:2px;
+}
+.item-comment-head-avatar {
+  display: inline-block;
+  width:48px;
+  height:48px;
+  vertical-align: middle;
+  background:#fff url(../images/nophoto.png) center no-repeat;
+  background-size: cover;
+  border-radius: 24px;
+  border:1px solid #ddd;
+}
+.item-comment-body {
+  position: relative;
+  margin-left: 68px;
+  border:1px solid #ddd;
+}
+.item-comment-body:before {
+  content: " ";
+  position: absolute;
+  top: 12px;
+  left: -14px;
+  display: inline-block;
+  border-top: 13px solid transparent;
+  border-left: 13px solid #ddd;
+  border-right: 0 solid #ddd;
+  border-bottom: 13px solid transparent;
+}
+.item-comment-body:after {
+  content: " ";
+  position: absolute;
+  top: 13px;
+  left: -13px;
+  display: inline-block;
+  border-top: 12px solid transparent;
+  border-left: 12px solid #f8f8f8;
+  border-right: 0 solid #f8f8f8;
+  border-bottom: 12px solid transparent;
+}
+.item-comment-body:before {
+  border-left-width: 0;
+  border-right-width: 15px;
+}
+.item-comment-body:after {
+  border-left-width: 0;
+  border-right-width: 14px;
+}
+.item-comment-title {
+  position: relative;
+  padding: 15px 110px 15px 15px;
+  background: #f8f8f8;
+}
+.item-comment-title-author {
+  margin-right: 10px;
+  font-weight: bold;
+  color: #337ab7;
+}
+.item-comment-buttons {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.item-comment-buttons .btn {
+  padding: 0 8px !important;
+  height: 30px;
+}
+.item-comment.mouse-enter .item-comment-buttons {
+  display: block;
+}
+.item-comment-inner {
+  padding:15px;
+}
+
+.item-comment.has-children {
+  padding-bottom: 0;
+}
+.item-comment-children {
+  display: none;
+  position: relative;
+  padding: 20px 0 0 62px;
+}
+.item-comment:last-child > .item-comment-children:after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  top: 47px;
+  height: calc(100% - 45px);
+  width: 10px;
+  background: #fff;
+}
+.item-comment-children:before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: 46px;
+  height: 1px;
+  width: 50px;
+  background: #ccc;
+}
+.has-children > .item-comment-children {
+  display: block;
+}
+
+.new-comment {
+  display: none;
+}
+.new-comment-footer {
+  padding-top: 15px;
+}
+
+.item-comment .new-comment {
+  padding: 5px 15px 15px;
+}
+
+.items-comments-footer {
+}
+
+.item-comments-list-load {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.line-tabs {
+  position: relative;
+  margin-top: 20px;
+  padding: 0 20px;
+}
+.line-tabs.tabs .nav-tabs a {
+  background: none;
+  border-top: none !important;
+  padding: 5px 15px;
+}
+.line-tabs.tabs .tab-content {
+  padding: 25px 0 20px 10px;
+}
+.line-tabs.tabs .nav-tabs .active a {
+  border: none !important;
+  border-bottom: 3px solid #337ab7 !important;
+  background: none;
+  font-weight: bold;
+  color: #337ab7;
+}
+.comment-order-toggle {
+  position: absolute;
+  right: 20px;
+  top: -6px;
+  cursor: pointer;
+}
+.comment-order-toggle.asc .glyphicon:before {
+  content: "\e113";
+}
+.comment-order-toggle.desc .glyphicon:before {
+  content: "\e114";
+}
+
+.item-comments.loading .items-comments-footer,
+.item-comments.loading .new-comment,
+.item-comments.loading .item-comment-buttons {
+  display: none !important;
+}

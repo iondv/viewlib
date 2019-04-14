@@ -1,0 +1,127 @@
+<!-- viewlib\registry\templates\comments -->
+<%
+let options = field.options && field.options.comments ||  {};
+let id = `${form.ids.attr}_${prop.getName()}_сom`;
+let comment = {
+  'text': options.textProperty || 'text',
+  'user': options.userProperty || '_creator',
+  'parent': options.parentProperty || 'answlink',
+  'photo': options.photoProperty || 'owner_ref.foto.link',
+  'date': options.dateProperty || prop.meta._refClass.getCreationTracker() || 'date'
+};
+let count = options.count || 100;
+let permissions = item.attrPermissions && item.attrPermissions[prop.getName()] || {};
+%>
+
+<% stylesheet(`${module}/viewlib-static/css/comments.css`) -%>
+<% script(`${module}/viewlib-static/js/comments.js`) -%>
+
+<div id="<%= id %>" class="item-comments form-group loading"
+     data-create-url='<%= module %>/api/<%= node %>/<%= prop.meta._refClass.getCanonicalName() %>/do'
+     data-put-url='<%= module %>/api/<%= node %>/<%= item.getClassName() %>/<%= item.getItemId() %>/do'
+     data-fetch-url='<%= module %>/api/<%= item.getClassName() %>/<%= item.getItemId() %>/<%= prop.getName() %>'
+     data-action-url='<%= module %>/api/<%= item.getClassName() %>/<%= item.getItemId() %>/<%= prop.getName() %>/do'
+     data-edit-url='<%= module %>/api/<%= node %>/{{class}}/{{id}}/do'>
+
+  <div class="comment-order-toggle asc" data-direction="asc"
+       title="Изменить порядок в списке">
+    <span class="glyphicon"></span>
+  </div>
+
+  <div class="modal fade" id="comment-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title">Редактирование</h4>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control" rows="8"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info modal-comment-edit">
+            Сохранить
+          </button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Отменить
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/html" id="item-comment">
+    <div class="item-comment">
+      <div class="item-comment-head">
+        <div class="item-comment-head-avatar" title="{{author}}" style="{{photo}}"></div>
+      </div>
+      <div class="item-comment-body">
+        <div class="item-comment-title">
+          <% if (permissions.write && permissions.c_create) { %>
+          <div class="item-comment-buttons">
+            <button class="btn btn-sm btn-success item-comment-replay" title="Ответить">
+              <span class="glyphicon glyphicon-plus-sign"></span>
+            </button>
+            <button class="btn btn-sm btn-info item-comment-edit" title="Редактировать"
+                    data-toggle="modal" data-target="#comment-edit-modal">
+              <span class="glyphicon glyphicon-edit"></span>
+            </button>
+            <button class="btn btn-sm btn-danger item-comment-delete" title="Удалить">
+              <span class="glyphicon glyphicon-trash"></span>
+            </button>
+          </div>
+          <% } %>
+          <span class="item-comment-title-author">{{author}}</span>
+          <span class="item-comment-title-date">{{date}}</span>
+        </div>
+        <div class="item-comment-inner">{{text}}</div>
+      </div>
+      <div class="item-comment-children"></div>
+    </div>
+  </script>
+
+  <div class="item-comments-list-load" style="display: none">
+    <button class="btn btn-default">
+      Показать предыдущие комментарии
+    </button>
+  </div>
+
+  <div class="item-comments-list">
+    <div class="mt20 mb20 text-center">
+      <span class="glyphicon glyphicon-refresh spinning"></span>
+    </div>
+  </div>
+
+  <% if (permissions.write && permissions.c_create) { %>
+  <div class="items-comments-footer">
+    <div class="new-comment">
+      <div class="new-comment-body">
+        <textarea class="new-comment-text form-control" rows="4" name="<%= prop.getName() %>"></textarea>
+      </div>
+      <div class="new-comment-footer">
+        <button type="button" class="btn btn-info active new-comment-send">
+          Отправить
+        </button>
+        <button type="button" class="btn btn-default cancel-new-comment">
+          Отменить
+        </button>
+      </div>
+    </div>
+    <button type="button" class="btn btn-success add-new-comment">
+      Добавить комментарий
+    </button>
+  </div>
+  <% } %>
+</div>
+
+<script>
+  $(function() {
+    $(document.getElementById('<%=id%>')).ionItemComments({
+      comment: <%- JSON.stringify(comment) %>,
+      user: '<%= user.id() %>',
+      count: '<%= count %>'
+    });
+  });
+</script>

@@ -1,0 +1,159 @@
+<!-- dt-object-list -->
+<% script(`${module}/viewlib-static/js/scan.js`) -%>
+<% script(`${module}/viewlib-static/js/thumbCollection.js`) -%>
+<% script(`${module}/viewlib-static/js/ajax-uploader-scan.js`) -%>
+<% script(`${module}/viewlib-static/vendor/scanner/scanner.js`) -%>
+<% stylesheet(`${module}/viewlib-static/css/scan.css`) -%>
+
+<% if (!attrPermissions || attrPermissions.read) { %>
+<%
+  var options = {
+    dt: utils.collectionTableOptions(prop, field),
+    fieldTypes: FieldTypes,
+    inlineForm: typeof inlineForm === 'undefined' ? false : inlineForm,
+    locale,
+    url: {
+      node: `${module}/${node}/`,
+      create: item.getItemId()
+        ? `${module}/${node}/new/${item.getClassName()}.${item.getItemId()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`
+        : `${module}/${node}/new/${item.getClassName()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`,
+      select: item.getItemId()
+        ? `${module}/${node}/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/select`
+        : `${module}/${node}/${item.getClassName()}/${prop.getName()}/select`,
+      update: item.getItemId()
+        ? `${module}/${node}/view/${item.getClassName()}.${item.getItemId()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`
+        : `${module}/${node}/view/${item.getClassName()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`,
+      do: `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/do`,
+      reorder: item.getItemId()
+        ? `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/reorder`
+        : null
+    },
+    deffered: true,
+    multiSelect: true,
+    selConditions: field.selConditions,
+    condensedView,
+    options: field.options
+  };
+
+  var collData = prop.evaluate();
+  var ajax = false;
+  if (Array.isArray(collData) || !item.getItemId()) {
+    options.dt.data = utils.toJSON(collData || []);
+  } else if (item.getItemId()) {
+    ajax = true;
+    options.url.list = `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}`;
+  }
+%>
+<div id="scan-container_<%= id %>"
+     class="form-group loading list-container <%= field.required?"required":"" %> <%=cssFromTags(field)%>"
+     style="<%=styleFromTags(field)%>"
+     data-backref="<%= prop.meta.backRef %>"
+     data-attr="<%= prop.getName() %>"
+     data-type="collection"
+     data-is-ajax="<%=ajax%>"
+     data-prop="<%=htmlEntities(JSON.stringify(field))%>"
+     data-ref-short-view="<%- refShortViewFields.includes(prop.getName()) %>"
+     length = "0">
+  <input type="hidden" name="<%= prop.getName() %>" class="attr-value" disabled>
+  <label class="col-md-2 col-sm-3 control-label"><%= field.caption %></label>
+  <div class="col-md-10 col-sm-9">
+    <div class="list-tools">
+      <% if (attrPermissions) { %>
+      <% if (attrPermissions.c_create && field.options && field.options.inplaceInsertion) { %>
+      <button type="button" class="create-inline command btn btn-success" data-id="CREATE-INLINE"
+              style="display:none;" title="Создать на месте">
+        <span class="glyphicon glyphicon-console"></span>
+      </button>
+      <button type="button" class="scan-inline command btn btn-success" data-id="CREATE-INLINE"
+              style="display:none;" title="Создать на месте">
+        <span class="glyphicon glyphicon-inbox"></span>
+      </button>
+      <% } %>
+      <% if (attrPermissions.write) { %>
+      <button type="button" class="add command btn btn-primary" data-id="ADD" style="display:none;" title="Добавить">
+        <span class="glyphicon glyphicon-option-horizontal"></span>
+      </button>
+      <% } %>
+      <% if (attrPermissions.c_create) { %>
+      <button type="button" class="create command btn btn-success" data-id="CREATE" style="display:none;" title="Создать">
+        <span class="glyphicon glyphicon-plus-sign"></span>
+      </button>
+      <% } %>
+      <% } %>
+      <% if (!attrPermissions || attrPermissions.c_view) { %>
+      <button type="button" class="edit command btn btn-info" data-id="EDIT" style="display:none;"
+              title="<%= attrPermissions && attrPermissions.c_edit ? 'Править' : 'Просмотр' %>">
+        <span class="glyphicon glyphicon-edit"></span>
+      </button>
+      <% } %>
+      <% if (attrPermissions) { %>
+      <% if (attrPermissions.write) { %>
+      <button type="button" class="remove command btn btn-warning" data-id="REMOVE" style="display:none;"
+              title="Убрать">
+        <span class="glyphicon glyphicon-remove"></span>
+      </button>
+      <% } %>
+      <% if (attrPermissions.c_delete) { %>
+      <button type="button" class="delete command btn btn-danger" data-id="DELETE" style="display:none;"
+              title="Удалить">
+        <span class="glyphicon glyphicon-remove"></span>
+      </button>
+      <% } %>
+      <% } %>
+      <button type="button" class="reload btn btn-default" title="Обновить"><span class="fa fa-refresh"></span></button>
+      <%if (options.dt.reorderable) {%>
+      <button type="button" class="sorting-up sorting btn btn-default" title="Вверх" style="display: none;">
+        <span class="fa fa-arrow-up"></span>
+      </button>
+      <button type="button" class="sorting-down sorting btn btn-default" title="Вниз" style="display: none;">
+        <span class="fa fa-arrow-down"></span>
+      </button>
+      <% } %>
+    </div>
+    <div class="table-responsive table-loading-container">
+      <table class="table table-striped table-bordered table-hover multi-selectable"
+             data-options="<%=htmlEntities(JSON.stringify(options))%>">
+      </table>
+      <div class="table-loading">
+        <div class="fa fa-refresh fa-spin table-loader"></div>
+      </div>
+    </div>
+    <p class="error-block"></p>
+    <div class="form-group-loader"><span class="fa fa-refresh fa-spin"></span></div>
+
+    <div class="inline-form-control update" title="Редактировать" style="display: none;">
+      <span class="glyphicon glyphicon-edit"></span>
+    </div>
+    <div class="inline-form-control save" title="Сохранить" style="display: none;">
+      <span class="glyphicon glyphicon-save"></span>
+    </div>
+    <div class="inline-form-control cancel" title="Отменить" style="display: none;">
+      <span class="glyphicon glyphicon-remove"></span>
+    </div>
+
+    <div class="inline-form-control remove" title="Убрать" style="display: none;">
+      <span class="glyphicon glyphicon-remove"></span>
+    </div>
+    <div class="inline-form-control delete" title="Удалить" style="display: none;">
+      <span class="glyphicon glyphicon-trash"></span>
+    </div>
+    <div class="inline-form-control workflow" style="display: none;">
+    </div>
+    <%if (options.dt.reorderable) {%>
+    <div class="inline-form-control sorting-up sorting" title="Вверх">
+      <span class="fa fa-arrow-up"></span>
+    </div>
+    <div class="inline-form-control sorting-down sorting" title="Вниз">
+      <span class="fa fa-arrow-down"></span>
+    </div>
+    <% } %>
+  </div>
+</div>
+<% } %>
+<script>
+  $(function() {
+    $(document).one('ajaxStop', function (event) {
+      $("#scan-container_<%= id %>").addScanCell();
+    });
+  })
+</script>
