@@ -107,7 +107,7 @@ const escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
       getShare: '<%= module %>/api/share/',
       shareStatus: '/viewlib/api/fileshare/<%= prop.item.getClassName() %>/<%= item.getItemId() ? item.getItemId() + "/" : "" %><%= prop.getName() %>/',
       updateShare: '/viewlib/api/fileshare/',
-      removeFile: '/viewlib/api/fileshare/remove/'
+      removeFile: '<%= item.getItemId() ? `/viewlib/api/fileshare/remove/${prop.item.getClassName()}/${item.getItemId()}/${prop.getName()}/` : '/viewlib/api/fileshare/remove/' %>'
     }
     $fileshare.ionFileShare(options);
   });

@@ -1,4 +1,17 @@
 <!-- file-collection -->
+<style type="text/css">
+  .results-item a {
+    display: block;
+  }
+
+  .results-item marked {
+    display: block;
+  }
+
+  .search-field {
+    margin-bottom: 5px;
+  }
+</style>
 <%
 	var escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
 
@@ -24,7 +37,11 @@
       {
         url: {
           do: `${module}/api/${node}/${prop.meta._refClass.getCanonicalName()}/do`,
-          remove: item.getItemId() && `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/remove`
+          remove: item.getItemId() && `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/remove`,
+          search: item.getItemId()
+            ? `/viewlib/api/file-collection/search/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/${map.file}`
+            : `/viewlib/api/file-collection/search/${item.getClassName()}/${prop.getName()}/${map.file}`,
+          removeFile: '/viewlib/api/fileshare/remove/'
         },
         actions: {
           download: true,
@@ -49,22 +66,19 @@
         update: item.getItemId()
                 ? `${module}/${node}/view/${item.getClassName()}.${item.getItemId()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`
                 : `${module}/${node}/view/${item.getClassName()}/${prop.getName()}/${prop.meta._refClass.getCanonicalName()}`,
-        do: `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/do`,
-        remove: item.getItemId()
-          ? `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/remove`
-          : null,
-        put: item.getItemId()
-          ? `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/add`
-          : null
+        do: item.getItemId() && `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/do`,
+        remove: item.getItemId() && `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/remove`,
+        put: item.getItemId() && `${module}/api/${item.getClassName()}/${item.getItemId()}/${prop.getName()}/add`
       },
       deffered: true
     },
     fileshare: {
       url: {
         getShare: `${module}/api/share/`,
-        shareStatus: `/viewlib/api/fileshare/${prop.meta._refClass.getCanonicalName()}/${map.file}/`,
+        shareStatus: item.getItemId()
+          ? `/viewlib/api/fileshare/${item.getClassName()}.${prop.getName()}/${item.getItemId()}/${map.file}/`
+          : `/viewlib/api/fileshare/${item.getClassName()}.${prop.getName()}/${map.file}/`,
         updateShare: '/viewlib/api/fileshare/',
-        removeFile: '/viewlib/api/fileshare/remove/'
       }
     }
   }
@@ -78,6 +92,7 @@
   });
 
   options.table.dt.pageLength = options.field.pageLength;
+  options.table.dt.searching = options.field.searching || false;
 
   var collData = prop.evaluate();
   var ajax = false;
@@ -121,6 +136,11 @@
       <%- partial('./parts/fileshare-modal', {escapedId: escapedId}) %>
       </div>
     </div>
+    <div class="modal textsearch fade" id="search_<%= escapedId %>" tabindex="-1" role="dialog" aria-labelledby="searchLabel">
+      <div class="modal-dialog" role="document">
+        <%- partial('./parts/fulltextsearch-modal', {escapedId: escapedId}) %>
+      </div>
+    </div>
 
     <div class="uploader"
       data-attr="<%= options.uploader.map.file %>"
@@ -156,11 +176,26 @@
 
     <div class="list-tools" style="min-height:34px;">
       <% if (!attrPermissions || attrPermissions.c_view) { %>
+
+      <button type="button" class="btn btn-primary"
+        data-toggle="modal" data-target="#search_<%= escapedId %>">
+        <span class="glyphicon glyphicon-search" title="fulltextsearch"></span>
+      </button>
+
       <button type="button" class="edit command btn btn-info" data-id="EDIT" style="display:none;"
               title="<%= attrPermissions && attrPermissions.c_edit ? 'Править' : 'Просмотр' %>">
         <span class="glyphicon glyphicon-edit"></span>
       </button>
       <% } %>
+      <% if (options.collection.searching) {%>
+        <button type="button" class="btn btn-primary search-toggle-btn" title="Поиск">
+          <span class="glyphicon glyphicon-zoom-in"></span>
+        </button>
+      <% } %>
+    </div>
+
+    <div class="search-field-container">
+      <input type="text" name="" class="search-field form-control" style="display:none;">
     </div>
 
 		<div class="table-responsive table-loading-container">

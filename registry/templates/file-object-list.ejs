@@ -1,0 +1,195 @@
+<!-- file-object-list -->
+<%
+  var listId = 'file-object-list';
+  var ids = {
+    listBtn: 'la_' + node.replace('@', '_') + '_'
+  };
+  var createUrl = `${module}/${node}/${createPath}`;
+  if (master.class && master.backRef) {
+    createUrl += `?masterId=${master.id}&masterClass=${master.class}&masterBackRef=${master.backRef}`;
+    master.backRefUrlPattern = module + master.backRefUrlPattern;
+  }
+  if (typeof containerItem !== 'undefined'
+    && typeof containerProperty !== 'undefined') {
+    locals.preTitle = `Выбор значения атрибута "${containerProperty.caption}" объекта "${containerItem.toString(null, dateCallback)}"`;
+  }
+  var table = {
+    dt: TableOptions,
+    fieldTypes: FieldTypes,
+    fieldModes: FieldModes,
+    locale,
+    multiSelect: true,
+    inlineForm: typeof inlineForm === 'undefined' ? false : inlineForm,
+    url: {
+      node: `${module}/${node}/`,
+      list: `${module}/api/${fetchPath}`,
+      create: createUrl,
+      update: `${module}/${node}/${updatePath}`,
+      do: `${module}/api/do`,
+      export: `${module}/export/${node}/${className}`,
+      autoOpen
+    },
+    commands,
+    master,
+    readOnly: !permissions.write,
+    options: typeof viewOptions === 'undefined' ? {} : viewOptions
+  };
+
+  var map = viewOptions && viewOptions.map || {file: 'file'};
+
+  var options = {
+    modalId: `share_${listId}`,
+    collection: {
+      map,
+      type: 'list',
+      url: {
+        search: `/viewlib/api/file-collection/search/${className}/${map.file}`
+      },
+      actions: {
+        download: Boolean(permissions.read),
+        share: Boolean(permissions.read)
+      }
+    },
+    fileshare: {
+      locale: {
+        lang: locale && locale.lang,
+        dateFormat: locale && locale.dateFormat,
+        dateTimeFormat: locale && locale.dateTimeFormat,
+      },
+      url: {
+        getShare: `${module}/api/share/`,
+        shareStatus: `/viewlib/api/fileshare/${className}/${map.file}`,
+        updateShare: '/viewlib/api/fileshare/',
+        removeFile: '/viewlib/api/fileshare/remove/'
+      }
+    }
+  };
+
+  table.dt.columns = table.dt.columns || [];
+  table.dt.columns.push({
+    name: 'file-col-tools',
+    targets: -1,
+    data: null,
+    title: '',
+    defaultContent: ''
+  });
+%>
+<% if (typeof filter !== 'undefined' && filter) options.filter = filter; %>
+
+<% modal ? layout('../imodal/content') : layout('../content') -%>
+
+<script>
+  var DATE_FORMAT = '<%=locale.dateFormat%>';
+  var DATETIME_FORMAT = '<%=locale.dateTimeFormat%>';
+</script>
+<div class="panel panel-default list-container" id="file-object-list">
+
+  <div class="modal fileshare fade" id="share_<%= listId %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+    <%- partial('./parts/fileshare-modal', {escapedId: listId}) %>
+    </div>
+  </div>
+
+  <div class="modal textsearch fade" id="search_<%= listId %>" tabindex="-1" role="dialog" aria-labelledby="searchLabel">
+    <div class="modal-dialog" role="document">
+      <%- partial('./parts/fulltextsearch-modal', {escapedId: listId}) %>
+    </div>
+  </div> 
+
+  <div class="panel-body">
+
+    <%if (typeof viewFilters !== 'undefined' && viewFilters && viewFilters.length) {%>
+      <%- partial('./list-view-filter', {filters: viewFilters}) %>
+    <% } %>
+
+    <div class="list-tools clearfix">
+      <% if (permissions.read) { %>
+        <button type="button" class="btn btn-primary"
+          data-toggle="modal" data-target="#search_<%= listId %>">
+          <span class="glyphicon glyphicon-search" title="fulltextsearch"></span>
+        </button> 
+      <% } %>
+
+      <% if (selectionDialog) { %>
+      <button id="<%=`${ids.listBtn}select`%>" class="select btn btn-primary command"
+              style="display:none;"
+              data-id="SELECT" data-bulk="true">Выбрать
+      </button>
+      <% } %>
+      <%commands.forEach(function (command) {
+        var html = command.caption;
+        switch (command.id) {
+          case 'CREATE-INLINE':
+            if (!permissions.use) return;
+            html = '<span class="glyphicon glyphicon-console"></span>';
+            break;
+          case 'CREATE':
+            if (!permissions.use) return;
+            break;
+      }
+
+        var code = command.id.toLowerCase();
+      %>
+      <button id="<%=`${ids.listBtn}${code}`%>" type="button" class="<%=code%> btn btn-success command"
+              title="<%=command.caption%>" data-id="<%=command.id%>" style="display:none;"><%-html%></button>
+      <%});%>
+      <button id="<%=`${ids.listBtn}close`%>" type="button" class="close btn btn-default modal-closer"
+              title="Закрыть" style="display:none;">Закрыть</button>
+      <button id="<%=`${ids.listBtn}reload`%>" type="button" class="reload btn btn-default"
+              title="Обновить"><span class="fa fa-refresh"></span></button>
+
+      <% if (typeof exporters !== 'undefined' && Object.keys(exporters).length) { %>
+      <%- partial('./_export', {buttonPrefix: ids.listBtn}) %>
+      <% } %>
+    </div>
+
+    <% include ../../../../modules/registry/view/default/templates/view/list-filter %>
+
+    <div class="table-responsive table-loading-container">
+      <table id="file-object-list-table"
+             class="table table-striped table-bordered table-hover multi-selectable"
+             data-options="<%=JSON.stringify(table)%>">
+      </table>
+      <div class="table-loading">
+        <div class="fa fa-refresh fa-spin table-loader"></div>
+      </div>
+    </div>
+
+    <div class="inline-form-control update" title="Редактировать" style="display: none;">
+      <span class="glyphicon glyphicon-edit"></span>
+    </div>
+    <div class="inline-form-control save" title="Сохранить" style="display: none;">
+      <span class="glyphicon glyphicon-save"></span>
+    </div>
+    <div class="inline-form-control cancel" title="Отменить" style="display: none;">
+      <span class="glyphicon glyphicon-remove"></span>
+    </div>
+
+    <div class="inline-form-control workflow" style="display: none;">
+    </div>
+
+    <% columns.sort(function (a, b) {
+      return a.orderNumber - b.orderNumber
+    }); %>
+    <% for (let col of columns) {
+      let tpl = customTpl(col);
+      if (tpl) {
+      %>
+      <%- partial(resolveTpl(tpl), {column: col}) %>
+      <% }
+    } %>
+
+  </div>
+  <div class="panel-footer"></div>
+</div>
+<% script(`${module}/viewlib-static/js/fileshare.js`) -%>
+<% script(`${module}/viewlib-static/js/file-collection.js`) -%>
+<script type="text/javascript">
+  $(function() {
+    $(window).on('load', function() {
+      var $container = $('#<%= listId %>');
+      var opts = JSON.parse('<%- JSON.stringify(options) %>');
+      $container.ionFileCollection(opts);
+    });
+  });
+</script>
