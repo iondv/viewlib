@@ -54,8 +54,8 @@
     });
 
     $shareModal.find('input[name=expiration]').datetimepicker({
-      locale: options.locale ? options.locale.lang : null,
-      format: options.locale ? options.locale.dateFormat: null
+      locale: options.locale ? options.locale.lang : false,
+      format: options.locale ? options.locale.dateFormat: false
     });
 
     $shareModal.on('show.bs.modal', function (e) {
@@ -156,16 +156,21 @@
     $this.find('.remove-fileshare-btn').on('click', function() {
       var frm = $(this).closest('.file-frame');
       var fileId = frm.data('fileid');
-      $.ajax({
-        url: options.url.removeFile + encodeURIComponent(fileId),
-        type: 'POST',
-        success: function (data) {
-          frm.find('.remove-file-btn').click();
-        },
-        error: function (xhreq, status, error) {
-          console.log(status, error);
-        }
-      });
+      if(confirm('Do you really want to delete the file"' + frm.data('filename') + '" ?')){
+        $.ajax({
+          url: options.url.removeFile + encodeURIComponent(fileId),
+          type: 'POST',
+          success: function (data) {
+            frm.remove();
+            $uploader.show();
+            messageCallout.info('File deleted');
+          },
+          error: function (xhreq, status, error) {
+            console.log(status, error);
+            messageCallout.error(error);
+          }
+        });
+      }
     });
 
     $.ajax({

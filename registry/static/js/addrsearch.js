@@ -2,7 +2,7 @@
 
   $.fn.ionAddrSearch = function (options) {
     if (!options.fields || !options.fields.length) {
-      console.log('Не указаны поля');
+      console.log('No fields specified');
       return;
     }
     this.each(function () {
@@ -80,7 +80,7 @@
             return JSON.stringify(query);
           },
           processResults: function (data) {
-            results = [{id: '__' + values.length, text: 'нет'}];
+            results = [{id: '__' + values.length, text: 'Not'}];
             if(data && data.data && data.data.length) {
               for (var i = 0; i < data.data.length; i++) {
                 results.push(data.data[i]);

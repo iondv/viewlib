@@ -4,7 +4,7 @@
   $.fn.addScanCell = function() {
     try {
       if (typeof InlineFormCell === 'undefined')
-        throw new Error('Класс инлайн редактирования ячеек таблицы не загружен');
+        throw new Error('Inline cell editing class is not loaded');
       const oldinlineCreate = InlineFormCell.create;
       InlineFormCell.create = function (type, $cell, $data, owner) {
         if (type === 'scan')

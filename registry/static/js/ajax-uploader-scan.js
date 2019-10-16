@@ -7,22 +7,22 @@
     maxSize: 10485760,
     extensions: null,
     mimeTypes: null,
-    tooSmall: "Минимальный размер файла - {limit}",
-    tooBig: "Максимальный размер файла - {limit}",
-    wrongExtension: "Разрешены только: {extensions}",
-    wrongMimeType: "Разрешены только: {mimeTypes}",
+    tooSmall: "Min file size - {limit}",
+    tooBig: "Maximum file size - {limit}",
+    wrongExtension: "Only allowed: {extensions}",
+    wrongMimeType: "Only allowed: {mimeTypes}",
     onlyImage: false,
     maxHeight: null,
     maxWidth: null,
     minHeight: 1,
     minWidth: 1,
-    notImage: "Файл не является изображением.",
-    overHeight: "Высота максимум - {limit} пикс.",
-    overWidth: "Ширина максимум - {limit} пикс.",
-    underHeight: "Высота минимум - {limit} пикс.",
-    underWidth: "Ширина минимум - {limit} пикс.",
-    tooMany: "Слишком много файлов.",
-    alreadyExists: "Такой файл уже выбран",
+    notImage: "File is not an image.",
+    overHeight: "Maximum height - {limit} pix.",
+    overWidth: "Maximum width - {limit} pix.",
+    underHeight: "Minimum height- {limit} pix.",
+    underWidth: "Minimum width - {limit} pix.",
+    tooMany: "Too many files.",
+    alreadyExists: "File is already selected",
     confirmRemoveStatus: ['done', 'uploading'],
     scanSettings: {
       use_asprise_dialog: true,
@@ -53,9 +53,9 @@
     $element.unwrap();
   }
   function formatFileSize (size) {
-    if (size > mByte) return parseInt(size / mByte) + ' Мб';
-    if (size > kByte) return parseInt(size / kByte) + ' Кб';
-    return size + ' байт';
+    if (size > mByte) return parseInt(size / mByte) + ' Mb';
+    if (size > kByte) return parseInt(size / kByte) + ' Kb';
+    return size + ' bait';
   }
 
   function Uploader ($uploader, $attrInput, options) {
@@ -68,7 +68,7 @@
     this.url = $uploader.data('url');
     this.fileAttrName = this.options.fileAttrName;
     if (typeof this.fileAttrName === 'undefined') {
-      console.error('Не определен аттрибут в который будет загружен файл');
+      console.error('Attribute in which the file will be loaded is not defined');
     }
     this.files = [];
     this.$input = $uploader.find('.scan-input-file');
@@ -135,14 +135,14 @@
         })
         .on('uploader.file.started', function (event, data) {
           data.$item.removeClass('pending').addClass('processing');
-          data.$item.find(self.messageSelector).text('Загрузка на сервер...');
+          data.$item.find(self.messageSelector).text('Uploading to server ...');
         })
         .on('uploader.file.progress', function (event, data) {
           data.$item.find('.progress-bar').css('width', data.percent + '%');
         })
         .on('uploader.file.uploaded', function (event, data) {
           data.$item.removeClass('processing').addClass('done');
-          data.$item.find(self.messageSelector).text('Загружен');
+          data.$item.find(self.messageSelector).text('Uploaded');
           $(window).trigger('resize');
           try {
             data = JSON.parse(data.response)[self.fileAttrName];
@@ -155,11 +155,11 @@
         })
         .on('uploader.file.error', function (event, data) {
           data.$item.removeClass('pending processing').addClass('failed');
-          data.$item.find(self.messageSelector).text('Ошибка при загрузке файла');
+          data.$item.find(self.messageSelector).text('Error loading file');
           self.fireEvent('done', {});
         })
         .on('uploader.file.confirmRemove', function (event, data) {
-          if (confirm('Удалить загруженный файл?')) {
+          if (confirm('Delete downloaded file?')) {
             let eventData = JSON.parse(data.response);
             if (self.$attrInput && eventData &&  self.fileAttrName)
               self.$attrInput.trigger('attr.apply', [eventData[self.fileAttrName], false]);
@@ -322,7 +322,7 @@
       var files = this.uploader.files;
       for (var i = 0; i < files.length; ++i) {
         if (files[i].removed) continue;
-        // проверять на совпадение только с предыдущими файлами
+        // check for match only with previous files
         if (files[i] === this) return false;
         if (files[i].file.size == this.file.size && files[i].file.name == this.file.name) return true;
       }
@@ -369,7 +369,7 @@
       this.xhr.onreadystatechange = function (event) {
         self.changeReadyState(event);
       };
-      // создать данные формы для выгрузки на сервер
+      // create form data to upload to server
       var data = new FormData;
       var attr = this.uploader.fileAttrName || 'file';
       data.append(attr, this.file.name);
@@ -381,8 +381,8 @@
 
     validate() {
       var self = this;
-      // пытаемся загрузить файл как изображение, и по результату начинаем валидацию
-      // загрузка изображения происходит по событиям, а не последовательно
+      // try to load the file as an image and start validating the result
+      // image loading occurs by event, not sequentially
       this.image = new Image;
       this.image.onload = function () {
         self.startValidate();

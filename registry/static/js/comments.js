@@ -158,7 +158,7 @@
           $modal.attr('comment-class', item.__class);
         });
         $comment.find('.item-comment-delete').on('click', function () {
-          if (confirm('Удалить данный комментарирй?')) {
+          if (confirm('Delete this comment?')) {
             deleteComment(url.delete, item)
               .then(function () {
                 var $parent = $comment.closest('.item-comment-children').closest('.item-comment');

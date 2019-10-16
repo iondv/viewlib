@@ -60,7 +60,7 @@ $.extend(Thumbnail.prototype, {
                  </a>`);
     $frame.append($img);
     if (self.$input) {
-      let $del = $('<span class="remove-btn glyphicon glyphicon-remove text-danger ml10" title="Удалить файл"></span>');
+      let $del = $('<span class="remove-btn glyphicon glyphicon-remove text-danger ml10" title="Delete file"></span>');
       $frame.append($del);
       $del.click(function () {
         self.$input.trigger('attr.apply', [item, false]);
