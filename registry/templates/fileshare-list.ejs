@@ -50,32 +50,33 @@ const escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
       var files = prop.getValue();
       var fileIds = [];
       %>
-      <% if (files && Array.isArray(files)) { %>
-      <%
-        for (var i = 0; i < files.length; i++) {
-          fileIds.push(files[i].id);
-      %>
-      <p data-fileid="<%=files[i].id%>" data-filename="<%=files[i].name%>" class="form-control-static file-frame">
-        <a href="<%= files[i].link %>" target="_blank" class="file-frame-title"><%=files[i].name%></a>
-        <span class="remove-fileshare-btn glyphicon glyphicon-remove text-danger ml10" title="Удалить файл"></span>
-
-        <% if (Array.isArray(field.tags) && field.tags.indexOf('share') >= 0) { %>
-        <button type="button" class="btn btn-primary btn-lg share-dlg-btn" data-toggle="modal" data-target="#share_<%= escapedId %>">
-          <span class="glyphicon glyphicon-cloud-download" title="sharing"></span>
-        </button>
-        <% } %>
-      </p>
-      <% } %>
-
-      <div class="modal fileshare fade" id="share_<%= escapedId %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-        <%- partial('./parts/fileshare-modal', {escapedId: escapedId}) %>
-        </div>
-      </div>
-
-      <% } %>
+      <%  if (files && Array.isArray(files)) {
+            files.forEach((file) => {
+              fileIds.push(file.id);
+              %>
+              <p data-fileid="<%=file.id%>" data-filename="<%=file.name%>" class="form-control-static file-frame">
+                <a href="<%= file.link %>" target="_blank" class="file-frame-title"><%=file.name%></a>
+                <span class="remove-fileshare-btn glyphicon glyphicon-remove text-danger ml10" title="Удалить файл"></span>
+        
+                <% if (Array.isArray(field.tags) && field.tags.indexOf('share') >= 0) { %>
+                <button type="button" class="btn btn-primary btn-lg share-dlg-btn" data-toggle="modal" data-target="#share_<%= escapedId %>">
+                  <span class="glyphicon glyphicon-cloud-download" title="sharing"></span>
+                </button>
+                <% } %>
+              </p>
+              <% 
+            });
+            %>
+            <div class="modal fileshare fade" id="share_<%= escapedId %>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+              <%- partial('./parts/fileshare-modal', {escapedId: escapedId}) %>
+              </div>
+            </div>
+            <%
+          }
+        %>
         <input type="hidden" id="<%= id %>" name="<%= prop.getName() %>"
-               class="attr-value" value="<%=JSON.stringify(fileIds)%>">
+               class="attr-value" <% if(fileIds.length){ %> value="<%= JSON.stringify(fileIds)%>" <% } %> />
         <ul class="uploaded-list"></ul>
 
         <div class="uploader" data-attr="<%= prop.getName() %>" data-url="/<%=module%>/api/upload/<%= item.getClassName() %><%= item.getItemId() ? '/' + item.getItemId() : '/' %>"
