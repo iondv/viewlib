@@ -2,7 +2,7 @@
 <div class="modal-content">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title" id="myModalLabel">Sharing</h4>
+    <h4 class="modal-title" id="myModalLabel"><%=__('Sharing')%></h4>
   </div>
   <div class="modal-body">
     <div class="table-loading" style="z-index: 1000;">
@@ -11,7 +11,7 @@
     <div class="form-group">
       <div class="share-file-menu-btn-wrap">
         <input class="toggler" id="share_<%= escapedId %>_sharebtn" type="checkbox" name="shareSet" data-handle=".share-block" />
-        <label for="share_<%= escapedId %>_sharebtn">Поделиться ссылкой</label>
+        <label for="share_<%= escapedId %>_sharebtn"><%=__('Поделиться ссылкой')%></label>
       </div>
       <div class="input-block share-block" style="display: none;">
         <input type="text" class="share-link form-control share-block" id="share_<%= escapedId %>_sharelink" value="" readonly />
@@ -20,25 +20,25 @@
     </div>
     <div class="share-block" style="display: none;"><div class="form-group" style="display: none;">
         <input id="share_<%= escapedId %>_permissions" type="checkbox" name="permissions" />
-        <label for="share_<%= escapedId %>_permissions">Разрешить на редактирование</label>
+        <label for="share_<%= escapedId %>_permissions"><%=__('Разрешить на редактирование')%></label>
     </div></div>
     <div class="form-group share-block" style="display: none;">
         <input class="toggler" id="share_<%= escapedId %>_passwordSet" type="checkbox" name="passwordSet" data-handle="#share_<%= escapedId %>_password" />
-        <label for="share_<%= escapedId %>_passwordSet">Защитить паролем</label>
+        <label for="share_<%= escapedId %>_passwordSet"><%=__('Защитить паролем')%></label>
         <input id="share_<%= escapedId %>_password" type="password" class="form-control" value="" 
         placeholder="Введите новый пароль"
         name="password" style="display: none;" autocomplete="new-password"/>
     </div>
     <div class="form-group share-block" style="display: none;">
         <input class="toggler" id="share_<%= escapedId %>_expirationSet" type="checkbox" name="expirationSet" data-handle="#share_<%= escapedId %>_expiration" />
-        <label for="share_<%= escapedId %>_expirationSet">Установить срок действия</label>
+        <label for="share_<%= escapedId %>_expirationSet"><%=__('Установить срок действия')%></label>
         <input id="share_<%= escapedId %>_expiration" type="text" class="form-control" value="" name="expiration" style="display: none;" />
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-default share-apply">Применить</button>
-    <a href="#" type="button" class="btn btn-default share-block" role="button" target="_blank" style="display: none;">Перейти в хранилище</a>
-    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+    <button type="button" class="btn btn-default share-apply"><%=__('Применить')%></button>
+    <a href="#" type="button" class="btn btn-default share-block" role="button" target="_blank" style="display: none;"><%=__('Перейти в хранилище')%></a>
+    <button type="button" class="btn btn-default" data-dismiss="modal"><%=__('Закрыть')%></button>
   </div>
 </div>
 <!-- fileshare modal - end -->

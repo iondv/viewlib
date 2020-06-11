@@ -61,21 +61,21 @@
       <% if (attrPermissions) { %>
       <% if (attrPermissions.c_create && field.options && field.options.inplaceInsertion) { %>
       <button type="button" class="create-inline command btn btn-success" data-id="CREATE-INLINE"
-              style="display:none;" title="Создать на месте">
+              style="display:none;" title="<%=__('Создать на месте')%>">
         <span class="glyphicon glyphicon-console"></span>
       </button>
       <button type="button" class="scan-inline command btn btn-success" data-id="CREATE-INLINE"
-              style="display:none;" title="Создать на месте">
+              style="display:none;" title="<%=__('Создать на месте')%>">
         <span class="glyphicon glyphicon-inbox"></span>
       </button>
       <% } %>
       <% if (attrPermissions.write) { %>
-      <button type="button" class="add command btn btn-primary" data-id="ADD" style="display:none;" title="Добавить">
+      <button type="button" class="add command btn btn-primary" data-id="ADD" style="display:none;" title="<%=__('Добавить')%>">
         <span class="glyphicon glyphicon-option-horizontal"></span>
       </button>
       <% } %>
       <% if (attrPermissions.c_create) { %>
-      <button type="button" class="create command btn btn-success" data-id="CREATE" style="display:none;" title="Создать">
+      <button type="button" class="create command btn btn-success" data-id="CREATE" style="display:none;" title="<%=__('Создать')%>">
         <span class="glyphicon glyphicon-plus-sign"></span>
       </button>
       <% } %>
@@ -89,23 +89,23 @@
       <% if (attrPermissions) { %>
       <% if (attrPermissions.write) { %>
       <button type="button" class="remove command btn btn-warning" data-id="REMOVE" style="display:none;"
-              title="Убрать">
+              title="<%=__('Убрать')%>">
         <span class="glyphicon glyphicon-remove"></span>
       </button>
       <% } %>
       <% if (attrPermissions.c_delete) { %>
       <button type="button" class="delete command btn btn-danger" data-id="DELETE" style="display:none;"
-              title="Удалить">
+              title="<%=__('Удалить')%>">
         <span class="glyphicon glyphicon-remove"></span>
       </button>
       <% } %>
       <% } %>
-      <button type="button" class="reload btn btn-default" title="Обновить"><span class="fa fa-refresh"></span></button>
+      <button type="button" class="reload btn btn-default" title="<%=__('Обновить')%>"><span class="fa fa-refresh"></span></button>
       <%if (options.dt.reorderable) {%>
-      <button type="button" class="sorting-up sorting btn btn-default" title="Вверх" style="display: none;">
+      <button type="button" class="sorting-up sorting btn btn-default" title="<%=__('Вверх')%>" style="display: none;">
         <span class="fa fa-arrow-up"></span>
       </button>
-      <button type="button" class="sorting-down sorting btn btn-default" title="Вниз" style="display: none;">
+      <button type="button" class="sorting-down sorting btn btn-default" title="<%=__('Вниз')%>" style="display: none;">
         <span class="fa fa-arrow-down"></span>
       </button>
       <% } %>
@@ -121,29 +121,29 @@
     <p class="error-block"></p>
     <div class="form-group-loader"><span class="fa fa-refresh fa-spin"></span></div>
 
-    <div class="inline-form-control update" title="Редактировать" style="display: none;">
+    <div class="inline-form-control update" title="<%=__('Редактировать')%>" style="display: none;">
       <span class="glyphicon glyphicon-edit"></span>
     </div>
-    <div class="inline-form-control save" title="Сохранить" style="display: none;">
+    <div class="inline-form-control save" title="<%=__('Сохранить')%>" style="display: none;">
       <span class="glyphicon glyphicon-save"></span>
     </div>
-    <div class="inline-form-control cancel" title="Отменить" style="display: none;">
+    <div class="inline-form-control cancel" title="<%=__('Отменить')%>" style="display: none;">
       <span class="glyphicon glyphicon-remove"></span>
     </div>
 
-    <div class="inline-form-control remove" title="Убрать" style="display: none;">
+    <div class="inline-form-control remove" title="<%=__('Убрать')%>" style="display: none;">
       <span class="glyphicon glyphicon-remove"></span>
     </div>
-    <div class="inline-form-control delete" title="Удалить" style="display: none;">
+    <div class="inline-form-control delete" title="<%=__('Удалить')%>" style="display: none;">
       <span class="glyphicon glyphicon-trash"></span>
     </div>
     <div class="inline-form-control workflow" style="display: none;">
     </div>
     <%if (options.dt.reorderable) {%>
-    <div class="inline-form-control sorting-up sorting" title="Вверх">
+    <div class="inline-form-control sorting-up sorting" title="<%=__('Вверх')%>">
       <span class="fa fa-arrow-up"></span>
     </div>
-    <div class="inline-form-control sorting-down sorting" title="Вниз">
+    <div class="inline-form-control sorting-down sorting" title="<%=__('Вниз')%>">
       <span class="fa fa-arrow-down"></span>
     </div>
     <% } %>

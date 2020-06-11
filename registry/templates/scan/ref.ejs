@@ -69,7 +69,7 @@
       <div class="scan-holder"></div>
       <div class="scan-uploader" data-options=<%=JSON.stringify(field.options)%> data-url="<%=module%>/api/upload/<%=prop.meta.refClass%>">
           <input type="file" class="scan-input-file">
-          <div class="uploader-overflow">Слишком много файлов</div>
+          <div class="uploader-overflow"><%=__('Слишком много файлов')%></div>
           <div class="uploader-list clearfix">
             <div class="uploader-item pending sample">
               <div class="uploader-thumb"><div></div></div>
@@ -79,11 +79,11 @@
                 <div class="uploader-sign-done glyphicon glyphicon-ok"></div>
                 <div class="uploader-sign-failed glyphicon glyphicon-ban-circle"></div>
               </div>
-              <div class="uploader-remove" title="Удалить"><span class="glyphicon glyphicon-remove"></span></div>
+              <div class="uploader-remove" title="<%=__('Удалить')%>"><span class="glyphicon glyphicon-remove"></span></div>
               <div class="uploader-info">
-                <div class="uploader-filename">File</div>
+                <div class="uploader-filename"><%=__('File')%></div>
                 <div class="progress progress-xxs"><div class="progress-bar"></div></div>
-                <div class="uploader-message">Ожидает проверки...</div>
+                <div class="uploader-message"><%=__('Ожидает проверки...')%></div>
               </div>
             </div>
           </div>
@@ -93,7 +93,7 @@
         attrPermissions && attrPermissions.write
       ) { %>
       <div class="dropdown-tools list-tools clearfix">
-        <button type="button" class="select-btn btn btn-primary" title="Выбрать"
+        <button type="button" class="select-btn btn btn-primary" title="<%=__('Выбрать')%>"
                 id="<%=`${form.ids.refBtn}${prop.getName()}_select`%>"
                 data-ref-property="<%= prop.getName() %>" data-id="SELECT">
           <span class="glyphicon glyphicon-option-horizontal"></span>
@@ -108,7 +108,7 @@
           <ul class="dropdown-menu create-menus" role="menu">
             <li>
               <button type="button" class="scan-inline command btn btn-success"
-                        title="Сканировать"
+                        title="<%=__('Сканировать')%>"
                         id="<%=`${form.ids.refBtn}${prop.getName()}_scan`%>"
                         style="display:none;"
                         data-ref-property="<%= prop.getName() %>"
@@ -117,7 +117,7 @@
               </button>
             </li>
             <li>
-              <button type="button" class="create-btn btn btn-success" title="Создать"
+              <button type="button" class="create-btn btn btn-success" title="<%=__('Создать')%>"
                         id="<%=`${form.ids.refBtn}${prop.getName()}_create`%>"
                         data-ref-property="<%= prop.getName() %>" data-id="CREATE">
                 <span class="glyphicon glyphicon-plus-sign"></span>
@@ -136,7 +136,7 @@
             <span class="glyphicon glyphicon-edit"></span>
           </button>
         <% } %>
-        <button type="button" class="remove-btn btn btn-warning" title="Убрать"
+        <button type="button" class="remove-btn btn btn-warning" title="<%=__('Убрать')%>"
                 id="<%=`${form.ids.refBtn}${prop.getName()}_remove`%>"
                 data-ref-property="<%= prop.getName() %>" data-id="REMOVE">
           <span class="glyphicon glyphicon-remove"></span>
@@ -148,13 +148,13 @@
     <p class="error-block"></p>
     <% } else {%>
       <% if (!Boolean(prop.meta.refClass)) {%>
-        <p class="error-block">Не указан ссылочный класс!</p>
+        <p class="error-block"><%=__('Не указан ссылочный класс!')%></p>
       <% }%>
       <% if (!Boolean(prop.meta.semantic)) {%>
-        <p class="error-block">Не указана семантика!</p>
+        <p class="error-block"><%=__('Не указана семантика!')%></p>
       <% }%>
       <% if (Boolean(prop.meta.semantic.indexOf('|') === -1)) {%>
-        <p class="error-block">Указано несколько полей для отображения!</p>
+        <p class="error-block"><%=__('Указано несколько полей для отображения!')%></p>
       <% }%>
       <p class="error-block"></p>
     <% }%>

@@ -11,8 +11,8 @@ const escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
      style="<%=styleFromTags(field)%>" data-type="scan" data-prop="<%= JSON.stringify(field) %>">
   <label for="<%= id %>" class="col-md-2 col-sm-3 control-label"><%= field.caption %></label>
   <div class="col-sm-9 col-md-10">
-    <button type="button" class="btn btn-default scan-btn">Сканировать</button>
-    <button type="button" class="btn btn-default uploader-btn">Загрузить</button>
+    <button type="button" class="btn btn-default scan-btn"><%=__('Сканировать')%></button>
+    <button type="button" class="btn btn-default uploader-btn"><%=__('Загрузить')%></button>
     <%
     var files = prop.getValue();
     if (!Boolean(files))
@@ -40,7 +40,7 @@ const escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
            class="attr-value">
     <div class="scan-uploader" data-options=<%=JSON.stringify(field.options)%> data-url="<%=module%>/api/upload-image/<%=item.getClassName()%>" data-attr="<%=prop.getName()%>">
       <input type="file" class="scan-input-file">
-      <div class="uploader-overflow">Слишком много файлов</div>
+      <div class="uploader-overflow"><%=__('Слишком много файлов')%></div>
       <div class="uploader-list clearfix">
         <div class="uploader-item pending sample">
           <div class="uploader-thumb"><div></div></div>
@@ -50,9 +50,9 @@ const escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
             <div class="uploader-sign-done glyphicon glyphicon-ok"></div>
             <div class="uploader-sign-failed glyphicon glyphicon-ban-circle"></div>
           </div>
-          <div class="uploader-remove" title="Удалить"><span class="glyphicon glyphicon-remove"></span></div>
+          <div class="uploader-remove" title="<%=__('Удалить')%>"><span class="glyphicon glyphicon-remove"></span></div>
           <div class="uploader-info">
-            <div class="uploader-filename">File</div>
+            <div class="uploader-filename"><%=__('File')%></div>
             <div class="progress progress-xxs"><div class="progress-bar"></div></div>
             <div class="uploader-message">Ожидает проверки...</div>
           </div>
@@ -66,7 +66,7 @@ const escapedId = id.replace(/(:|\.|\[|\]|,|=|@)/g, '_');
       <div data-fileid="<%=files[j].id%>" class="form-control-static file-frame">
         <a href="<%= files[j].link %>" target="_blank" class="file-frame-title">
           <img src="<%=files[j].thumbnails && files[j].thumbnails.small ? files[j].thumbnails.small.link : files[j].link%>" alt="<%=files[j].name%>"></a>
-        <span class="remove-btn glyphicon glyphicon-remove text-danger ml10" title="Удалить файл"></span>
+        <span class="remove-btn glyphicon glyphicon-remove text-danger ml10" title="<%=__('Удалить файл')%>"></span>
       </div>
       <% } %>
     </div>

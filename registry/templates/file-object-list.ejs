@@ -106,14 +106,18 @@
       <% if (permissions.read) { %>
         <button type="button" class="btn btn-primary"
           data-toggle="modal" data-target="#search_<%= listId %>">
-          <span class="glyphicon glyphicon-search" title="fulltextsearch"></span>
+          <span class="glyphicon glyphicon-search" title="<%=__('fulltextsearch')%>"></span>
         </button> 
       <% } %>
 
       <% if (selectionDialog) { %>
-      <button id="<%=`${ids.listBtn}select`%>" class="select btn btn-primary command"
-              style="display:none;"
-              data-id="SELECT" data-bulk="true">Выбрать
+      <button
+        id="<%=`${ids.listBtn}select`%>"
+        class="select btn btn-primary command"
+        style="display:none;"
+        data-id="SELECT" data-bulk="true"
+      >
+        <%=__('Выбрать')%>
       </button>
       <% } %>
       <%commands.forEach(function (command) {
@@ -134,9 +138,9 @@
               title="<%=command.caption%>" data-id="<%=command.id%>" style="display:none;"><%-html%></button>
       <%});%>
       <button id="<%=`${ids.listBtn}close`%>" type="button" class="close btn btn-default modal-closer"
-              title="Закрыть" style="display:none;">Закрыть</button>
+              title="<%=__('Закрыть')%>" style="display:none;"><%=__('Закрыть')%></button>
       <button id="<%=`${ids.listBtn}reload`%>" type="button" class="reload btn btn-default"
-              title="Обновить"><span class="fa fa-refresh"></span></button>
+              title="<%=__('Обновить')%>"><span class="fa fa-refresh"></span></button>
 
       <% if (typeof exporters !== 'undefined' && Object.keys(exporters).length) { %>
       <%- partial('./_export', {buttonPrefix: ids.listBtn}) %>
@@ -155,13 +159,13 @@
       </div>
     </div>
 
-    <div class="inline-form-control update" title="Редактировать" style="display: none;">
+    <div class="inline-form-control update" title="<%=__('Редактировать')%>" style="display: none;">
       <span class="glyphicon glyphicon-edit"></span>
     </div>
-    <div class="inline-form-control save" title="Сохранить" style="display: none;">
+    <div class="inline-form-control save" title="<%=__('Сохранить')%>" style="display: none;">
       <span class="glyphicon glyphicon-save"></span>
     </div>
-    <div class="inline-form-control cancel" title="Отменить" style="display: none;">
+    <div class="inline-form-control cancel" title="<%=__('Отменить')%>" style="display: none;">
       <span class="glyphicon glyphicon-remove"></span>
     </div>
 

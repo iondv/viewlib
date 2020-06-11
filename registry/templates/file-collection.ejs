@@ -120,7 +120,7 @@
       <button type="button" class="btn btn-primary btn-lg share-dlg-btn dir-share"
               data-toggle="modal" data-target="#share_<%= escapedId %>"
               style="display: none;">
-        <span class="glyphicon glyphicon-cloud-download" title="sharing"></span>
+        <span class="glyphicon glyphicon-cloud-download" title="<%=__('sharing')%>"></span>
       </button>
     </p>
     <% } %>
@@ -149,10 +149,10 @@
       <div class="uploader-input">
           <input type="file" class="uploader-input-file">
           <div class="uploader-dropzone">
-            <div class="uploader-dropzone-h1">Перетащите файлы сюда</div>
-            <div class="uploader-dropzone-h2">или выберите из папки</div>
+            <div class="uploader-dropzone-h1"><%=__('Перетащите файлы сюда')%></div>
+            <div class="uploader-dropzone-h2"><%=__('или выберите из папки')%></div>
           </div>
-          <div class="uploader-overflow">Слишком много файлов</div>
+          <div class="uploader-overflow"><%=__('Слишком много файлов')%></div>
       </div>
       <div class="uploader-list clearfix">
         <div class="uploader-item pending sample">
@@ -163,11 +163,11 @@
             <div class="uploader-sign-done glyphicon glyphicon-ok"></div>
             <div class="uploader-sign-failed glyphicon glyphicon-ban-circle"></div>
           </div>
-          <div class="uploader-remove" title="Удалить"><span class="glyphicon glyphicon-remove"></span></div>
+          <div class="uploader-remove" title="<%=__('Удалить')%>"><span class="glyphicon glyphicon-remove"></span></div>
           <div class="uploader-info">
-            <div class="uploader-filename">File</div>
+            <div class="uploader-filename"><%=__('File')%></div>
             <div class="progress progress-xxs"><div class="progress-bar"></div></div>
-            <div class="uploader-message">Ожидает проверки...</div>
+            <div class="uploader-message"><%=__('Ожидает проверки...')%></div>
           </div>
         </div>
       </div>
@@ -179,16 +179,16 @@
 
       <button type="button" class="btn btn-primary"
         data-toggle="modal" data-target="#search_<%= escapedId %>">
-        <span class="glyphicon glyphicon-search" title="fulltextsearch"></span>
+        <span class="glyphicon glyphicon-search" title="<%=__('fulltextsearch')%>"></span>
       </button>
 
       <button type="button" class="edit command btn btn-info" data-id="EDIT" style="display:none;"
-              title="<%= attrPermissions && attrPermissions.c_edit ? 'Править' : 'Просмотр' %>">
+              title="<%= attrPermissions && attrPermissions.c_edit ? __('Править') : __('Просмотр') %>">
         <span class="glyphicon glyphicon-edit"></span>
       </button>
       <% } %>
       <% if (options.collection.searching) {%>
-        <button type="button" class="btn btn-primary search-toggle-btn" title="Поиск">
+        <button type="button" class="btn btn-primary search-toggle-btn" title="<%=__('Поиск')%>">
           <span class="glyphicon glyphicon-zoom-in"></span>
         </button>
       <% } %>

@@ -24,7 +24,7 @@ let permissions = item.attrPermissions && item.attrPermissions[prop.getName()] |
      data-edit-url='<%= module %>/api/<%= node %>/{{class}}/{{id}}/do'>
 
   <div class="comment-order-toggle asc" data-direction="asc"
-       title="Изменить порядок в списке">
+       title="<%=__('Изменить порядок в списке')%>">
     <span class="glyphicon"></span>
   </div>
 
@@ -35,17 +35,17 @@ let permissions = item.attrPermissions && item.attrPermissions[prop.getName()] |
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <h4 class="modal-title">Редактирование</h4>
+          <h4 class="modal-title"><%=__('Редактирование')%></h4>
         </div>
         <div class="modal-body">
           <textarea class="form-control" rows="8"></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-info modal-comment-edit">
-            Сохранить
+            <%=__('Сохранить')%>
           </button>
           <button type="button" class="btn btn-default" data-dismiss="modal">
-            Отменить
+            <%=__('Отменить')%>
           </button>
         </div>
       </div>
@@ -61,14 +61,14 @@ let permissions = item.attrPermissions && item.attrPermissions[prop.getName()] |
         <div class="item-comment-title">
           <% if (permissions.write && permissions.c_create) { %>
           <div class="item-comment-buttons">
-            <button class="btn btn-sm btn-success item-comment-replay" title="Ответить">
+            <button class="btn btn-sm btn-success item-comment-replay" title="<%=__('Ответить')%>">
               <span class="glyphicon glyphicon-plus-sign"></span>
             </button>
-            <button class="btn btn-sm btn-info item-comment-edit" title="Редактировать"
+            <button class="btn btn-sm btn-info item-comment-edit" title="<%=__('Редактировать')%>"
                     data-toggle="modal" data-target="#comment-edit-modal">
               <span class="glyphicon glyphicon-edit"></span>
             </button>
-            <button class="btn btn-sm btn-danger item-comment-delete" title="Удалить">
+            <button class="btn btn-sm btn-danger item-comment-delete" title="<%=__('Удалить')%>">
               <span class="glyphicon glyphicon-trash"></span>
             </button>
           </div>
@@ -84,7 +84,7 @@ let permissions = item.attrPermissions && item.attrPermissions[prop.getName()] |
 
   <div class="item-comments-list-load" style="display: none">
     <button class="btn btn-default">
-      Показать предыдущие комментарии
+      <%=__('Показать предыдущие комментарии')%>
     </button>
   </div>
 
@@ -102,15 +102,15 @@ let permissions = item.attrPermissions && item.attrPermissions[prop.getName()] |
       </div>
       <div class="new-comment-footer">
         <button type="button" class="btn btn-info active new-comment-send">
-          Отправить
+          <%=__('Отправить')%>
         </button>
         <button type="button" class="btn btn-default cancel-new-comment">
-          Отменить
+          <%=__('Отменить')%>
         </button>
       </div>
     </div>
     <button type="button" class="btn btn-success add-new-comment">
-      Добавить комментарий
+      <%=__('Добавить комментарий')%>
     </button>
   </div>
   <% } %>
