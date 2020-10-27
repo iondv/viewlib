@@ -1,0 +1,32 @@
+
+.image-area-select .jcrop-image-stage {
+    display: inline-block;
+    vertical-align: middle;
+    z-index: 1;
+}
+.image-area-select .file-frame-image-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+.image-area-select .file-frame {
+    display: none;
+    position: relative;
+    padding-right: 50px;
+    min-height: 150px;
+}
+.image-area-select.has-image .file-frame {
+    display: block;
+}
+.image-area-select .file-frame-controls {
+    position: absolute;
+    right: 0;
+    top: 7px;
+    width: 40px;
+    z-index: 2;
+}
+.image-area-select .file-frame-controls .btn + .btn {
+    margin-top: 5px;
+}
+.image-area-select.has-image .file-frame + .uploader {
+    margin-top: 20px;
+}
