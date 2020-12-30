@@ -3,7 +3,6 @@ src/
 .idea/
 **/*.min.css
 **/*.min.js
-**/vendor
 .git-*/**
 
 ### Eclipse template
