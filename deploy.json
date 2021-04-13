@@ -9,10 +9,10 @@
     "registry": {
       "globals": {
         "templates": [
-          "./registry/templates"
+          "./node_modules/@iondv/viewlib/registry/templates"
         ],
         "statics": {
-          "viewlib-static": "./viewlib/registry/static"
+          "viewlib-static": "./node_modules/@iondv/viewlib/registry/static"
         }
       }
     }
